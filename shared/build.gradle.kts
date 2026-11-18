@@ -1,3 +1,4 @@
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
@@ -19,6 +20,15 @@ kotlin {
         }
     }
     jvm()
+    js {
+        browser()
+        binaries.executable()
+    }
+    @OptIn(ExperimentalWasmDsl::class)
+    wasmJs {
+        browser()
+        binaries.executable()
+    }
     android {
        namespace = "com.calemccammon.weather.kmp.shared"
        compileSdk = libs.versions.android.compileSdk.get().toInt()
@@ -43,12 +53,23 @@ kotlin {
             implementation(libs.compose.uiToolingPreview)
             implementation(libs.compose.uiTooling)
             implementation(libs.ktor.client.okhttp)
+            implementation(libs.maplibre.compose)
         }
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)
+            implementation(libs.maplibre.compose)
         }
         jvmMain.dependencies {
             implementation(libs.ktor.client.okhttp)
+            implementation(libs.maplibre.compose)
+        }
+        webMain.dependencies {
+            implementation(libs.ktor.client.js)
+        }
+        jsMain.dependencies {
+            implementation(libs.wrappers.browser)
+            // MapLibre Compose has a JS build but no Wasm build.
+            implementation(libs.maplibre.compose)
         }
         commonMain.dependencies {
             implementation(libs.compose.runtime)
@@ -68,7 +89,6 @@ kotlin {
             implementation(libs.koin.core)
             implementation(libs.koin.composeViewmodel)
             implementation(libs.multiplatform.settings)
-            implementation(libs.maplibre.compose)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
