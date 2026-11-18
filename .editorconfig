@@ -1,0 +1,31 @@
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+[*.{kt,kts}]
+indent_style = space
+indent_size = 4
+max_line_length = 120
+ktlint_code_style = ktlint_official
+# Composable functions are named like classes.
+ktlint_function_naming_ignore_when_annotated_with = Composable
+# Keep Android Studio from collapsing imports into wildcards, which ktlint rejects.
+ij_kotlin_name_count_to_use_star_import = 2147483647
+ij_kotlin_name_count_to_use_star_import_for_members = 2147483647
+ij_kotlin_packages_to_use_import_on_demand = unset
+
+# The iOS entry point is a function named like the UIKit class it returns.
+[**/MainViewController.kt]
+ktlint_standard_function-naming = disabled
+
+# Entry-point files are conventionally named main.kt.
+[**/main.kt]
+ktlint_standard_filename = disabled
+
+# Generated code (Compose resources and the like).
+[**/build/**/*.kt]
+ktlint = disabled

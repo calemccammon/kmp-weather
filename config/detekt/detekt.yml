@@ -1,0 +1,34 @@
+# Overrides on top of detekt's default rule set.
+# All rules: https://detekt.dev/docs/rules/comments
+
+naming:
+  MatchingDeclarationName:
+    # Platform.android.kt, Platform.ios.kt and so on hold the actuals of Platform.kt.
+    multiplatformTargets: ['android', 'ios', 'jvm', 'js', 'wasmJs', 'web']
+    # The wizard's sample names its actual classes AndroidPlatform, IOSPlatform...
+    # Drop this line when the sample is gone.
+    excludes: ['**/Platform.*.kt']
+  FunctionNaming:
+    # Composable functions are named like classes.
+    ignoreAnnotated: ['Composable']
+    # The iOS entry point is a function named like the UIKit class it returns.
+    excludes: ['**/MainViewController.kt']
+  TopLevelPropertyNaming:
+    constantPattern: '[A-Z][A-Za-z0-9_]*'
+
+style:
+  MagicNumber:
+    # Sizes and colours in Compose UI code and its previews.
+    ignoreAnnotated: ['Composable', 'Preview']
+    ignorePropertyDeclaration: true
+    ignoreCompanionObjectPropertyDeclaration: true
+    excludes: ['**/*Test/**']
+  UnusedPrivateMember:
+    ignoreAnnotated: ['Preview']
+
+complexity:
+  LongParameterList:
+    # Composables take many parameters by design.
+    ignoreAnnotated: ['Composable']
+  LongMethod:
+    ignoreAnnotated: ['Composable']

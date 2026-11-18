@@ -14,6 +14,29 @@ permissions:
   contents: read
 
 jobs:
+  lint:
+    name: Static analysis
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-java@v6
+        with:
+          distribution: zulu
+          java-version: 21
+      - uses: gradle/actions/setup-gradle@v6
+      # ktlint: formatting and style. detekt: code smells. lintDebug: Android Lint.
+      - run: ./gradlew ktlintCheck detekt :androidApp:lintDebug --continue
+      - uses: actions/upload-artifact@v7
+        if: failure()
+        with:
+          name: lint-reports
+          path: |
+            **/build/reports/ktlint/
+            **/build/reports/detekt/
+            **/build/reports/lint-results-*.html
+          retention-days: 14
+
   check:
     name: Test shared code
     runs-on: ubuntu-latest
@@ -30,7 +53,7 @@ jobs:
 
   build:
     name: Build Android APK, desktop and web apps
-    needs: check
+    needs: [lint, check]
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:

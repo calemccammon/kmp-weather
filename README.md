@@ -35,6 +35,7 @@ All are declared in `gradle/libs.versions.toml` and wired into
 | Saved places and settings | `multiplatform-settings-no-arg` |
 | Map | `maplibre-compose` (Android, iOS, desktop and the JS web target; not Wasm) |
 | Tests | `kotlin-test`, `kotlinx-coroutines-test`, `ktor-client-mock` |
+| Static analysis | ktlint (`.editorconfig`), detekt (`config/detekt/detekt.yml`), Android Lint |
 
 Any of these can be swapped; nothing depends on them yet. There is no location
 library: see the "Forecast for my current location" issue.
@@ -47,9 +48,17 @@ what CI and Pages build) and JS. MapLibre Compose has no Wasm build, so it is
 declared per platform in `shared/build.gradle.kts` instead of in `commonMain`;
 see the map issues for what that means for the map screen.
 
+## Static analysis
+
+```sh
+./gradlew ktlintCheck detekt :androidApp:lintDebug
+./gradlew ktlintFormat     # fixes what ktlint can fix by itself
+```
+
 ## CI
 
-`.github/workflows/ci.yml` runs on pushes to `main` and on pull requests: the
+`.github/workflows/ci.yml` runs on pushes to `main` and on pull requests:
+ktlint, detekt and Android Lint, the
 shared module's desktop, Android host and web tests, then the Android debug
 APK and the Wasm web app (both uploaded as workflow artifacts) and the desktop
 app.
