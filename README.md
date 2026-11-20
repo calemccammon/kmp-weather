@@ -1,9 +1,10 @@
 # kmp-weather
 
 A weather app in Kotlin Multiplatform with Compose Multiplatform: search for a
-place, see its forecast. One of three builds of the same app, alongside
-[flutter-weather](https://github.com/calemccammon/flutter-weather) and
-[react-native-weather](https://github.com/calemccammon/react-native-weather),
+place, see its forecast. One of four builds of the same app, alongside
+[flutter-weather](https://github.com/calemccammon/flutter-weather),
+[react-native-weather](https://github.com/calemccammon/react-native-weather) and
+[maui-weather](https://github.com/calemccammon/maui-weather),
 to compare the frameworks.
 
 The repository holds the project set-up only. The code under `shared/`,
