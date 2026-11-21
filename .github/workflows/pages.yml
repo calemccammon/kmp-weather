@@ -32,14 +32,10 @@ jobs:
           distribution: zulu
           java-version: 21
       - uses: gradle/actions/setup-gradle@v6
-      # The Wasm build. For the JS build use :webApp:jsBrowserDistribution and
-      # webApp/build/dist/js/productionExecutable.
-      - run: ./gradlew :webApp:wasmJsBrowserDistribution
-      # Serve the app for unknown paths too, so deep links survive a reload.
-      - run: cp webApp/build/dist/wasmJs/productionExecutable/index.html webApp/build/dist/wasmJs/productionExecutable/404.html
+      - run: ./gradlew :webApp:jsBrowserDistribution
       - uses: actions/upload-pages-artifact@v5
         with:
-          path: webApp/build/dist/wasmJs/productionExecutable
+          path: webApp/build/dist/js/productionExecutable
 
   deploy:
     name: Deploy

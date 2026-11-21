@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Every string the user sees or hears. -->
+<resources>
+    <string name="app_title">Weather</string>
+
+    <!-- Search -->
+    <string name="search_hint">Search for a place</string>
+    <!-- Shown under the open search bar before anything is typed. -->
+    <string name="search_prompt">Type a city, town or postcode</string>
+    <!-- %1$s is what was typed. -->
+    <string name="search_nothing_found">Nothing found for "%1$s"</string>
+    <!-- Screen-reader name of the progress bar shown while a search is on its way. -->
+    <string name="search_searching">Searching</string>
+    <!-- Name of the button that deselects the current place. -->
+    <string name="clear_place">Clear place</string>
+    <string name="try_again">Try again</string>
+
+    <!-- Forecast -->
+    <!-- Shown in the forecast area while no place is selected. A mouse has no press-and-hold. -->
+    <string name="forecast_hint">Search for a place, or press and hold on the map (right-click with a mouse), to see its forecast.</string>
+    <!-- Screen-reader name of the progress bar shown while a forecast is on its way. -->
+    <string name="forecast_loading">Loading the forecast</string>
+    <string name="forecast_this_week">This week</string>
+    <string name="forecast_no_days">No forecast for the coming days.</string>
+    <!-- Credit the weather service asks for. -->
+    <string name="forecast_credit">Weather data by Open-Meteo.com</string>
+
+    <!-- Units -->
+    <string name="units_celsius">°C</string>
+    <string name="units_fahrenheit">°F</string>
+    <!-- Screen-reader names of the two units choices. -->
+    <string name="units_celsius_name">Celsius and km/h</string>
+    <string name="units_fahrenheit_name">Fahrenheit and mph</string>
+
+    <!-- Map -->
+    <!-- Credit the map's makers ask for. -->
+    <string name="map_credit">© OpenStreetMap contributors, OpenMapTiles, OpenFreeMap</string>
+    <string name="map_label">Map. Press and hold to pick a point.</string>
+    <!-- Screen-reader name of the pin on the map. -->
+    <string name="selected_place">Selected place</string>
+
+    <!-- What a place with no name is called, as a point picked off the map:
+         "35.60°N, 82.55°W". %1$s is place_north or place_south, %2$s is
+         place_east or place_west; each of those takes degrees such as "35.60". -->
+    <string name="place_coordinates">%1$s, %2$s</string>
+    <string name="place_north">%1$s°N</string>
+    <string name="place_south">%1$s°S</string>
+    <string name="place_east">%1$s°E</string>
+    <string name="place_west">%1$s°W</string>
+
+    <!-- Temperatures and speeds. %1$d is a whole number. -->
+    <string name="temperature">%1$d°</string>
+    <string name="temperature_celsius">%1$d°C</string>
+    <string name="temperature_fahrenheit">%1$d°F</string>
+    <string name="feels_like">Feels like %1$d°</string>
+    <!-- %1$s is speed_kmh or speed_mph. -->
+    <string name="wind">Wind %1$s</string>
+    <string name="speed_kmh">%1$d km/h</string>
+    <string name="speed_mph">%1$d mph</string>
+    <!-- Chance of rain or snow in a forecast row. -->
+    <string name="precipitation_chance">%1$d%</string>
+
+    <!-- Days of the week, short for the forecast's rows and in full for a screen reader. -->
+    <string name="today">Today</string>
+    <string name="day_short_monday">Mon</string>
+    <string name="day_short_tuesday">Tue</string>
+    <string name="day_short_wednesday">Wed</string>
+    <string name="day_short_thursday">Thu</string>
+    <string name="day_short_friday">Fri</string>
+    <string name="day_short_saturday">Sat</string>
+    <string name="day_short_sunday">Sun</string>
+    <string name="day_monday">Monday</string>
+    <string name="day_tuesday">Tuesday</string>
+    <string name="day_wednesday">Wednesday</string>
+    <string name="day_thursday">Thursday</string>
+    <string name="day_friday">Friday</string>
+    <string name="day_saturday">Saturday</string>
+    <string name="day_sunday">Sunday</string>
+
+    <!-- Whole blocks as one sentence for a screen reader. -->
+    <string name="spoken_celsius">%1$d degrees Celsius</string>
+    <string name="spoken_fahrenheit">%1$d degrees Fahrenheit</string>
+    <!-- %1$s condition, %2$s spoken_celsius or spoken_fahrenheit, %3$d feels-like
+         temperature, %4$s speed_kmh or speed_mph. -->
+    <string name="current_description">Now: %1$s, %2$s, feels like %3$d, wind %4$s</string>
+    <!-- %1$s day, %2$s condition, %3$d low, %4$d high, %5$d chance of precipitation. -->
+    <string name="day_description">%1$s: %2$s, low %3$d, high %4$d degrees</string>
+    <string name="day_description_with_chance">%1$s: %2$s, low %3$d, high %4$d degrees, %5$d percent chance of precipitation</string>
+
+    <!-- Weather conditions -->
+    <string name="condition_clear">Clear</string>
+    <string name="condition_mostly_clear">Mostly clear</string>
+    <string name="condition_partly_cloudy">Partly cloudy</string>
+    <string name="condition_overcast">Overcast</string>
+    <string name="condition_fog">Fog</string>
+    <string name="condition_drizzle">Drizzle</string>
+    <string name="condition_freezing_drizzle">Freezing drizzle</string>
+    <string name="condition_rain">Rain</string>
+    <string name="condition_freezing_rain">Freezing rain</string>
+    <string name="condition_snow">Snow</string>
+    <string name="condition_rain_showers">Rain showers</string>
+    <string name="condition_snow_showers">Snow showers</string>
+    <string name="condition_thunderstorm">Thunderstorm</string>
+    <string name="condition_unknown">Unknown</string>
+
+    <!-- What went wrong -->
+    <string name="failure_timeout">The weather service took too long to answer.</string>
+    <string name="failure_no_connection">Could not reach the weather service. Check your connection.</string>
+    <string name="failure_bad_response">The weather service sent an answer this app could not read.</string>
+    <string name="failure_rejected">The weather service refused the request.</string>
+    <string name="failure_unavailable">The weather service is having trouble. Try again in a moment.</string>
+    <string name="failure_invalid_place">That point is not on the map.</string>
+</resources>

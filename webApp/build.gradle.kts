@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
-
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.composeMultiplatform)
@@ -9,12 +7,7 @@ plugins {
 kotlin {
     js {
         browser()
-        binaries.executable()
-    }
-
-    @OptIn(ExperimentalWasmDsl::class)
-    wasmJs {
-        browser()
+        useEsModules()
         binaries.executable()
     }
 
@@ -23,6 +16,7 @@ kotlin {
             implementation(project(":shared"))
 
             implementation(libs.compose.ui)
+            implementation(libs.maplibre.compose)
         }
     }
 }

@@ -1,4 +1,3 @@
-import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
@@ -22,11 +21,8 @@ kotlin {
     jvm()
     js {
         browser()
-        binaries.executable()
-    }
-    @OptIn(ExperimentalWasmDsl::class)
-    wasmJs {
-        browser()
+        // MapLibre Compose is published as ES modules only.
+        useEsModules()
         binaries.executable()
     }
     android {
@@ -55,51 +51,54 @@ kotlin {
         }
     }
     sourceSets {
+        // The tests move a test clock by hand, which the coroutines library
+        // still marks as experimental.
+        matching { it.name.endsWith("Test") }.configureEach {
+            languageSettings.optIn("kotlinx.coroutines.ExperimentalCoroutinesApi")
+        }
         androidMain.dependencies {
             implementation(libs.compose.uiToolingPreview)
             implementation(libs.compose.uiTooling)
             implementation(libs.ktor.client.okhttp)
-            implementation(libs.maplibre.compose)
+            runtimeOnly(libs.maplibre.compose.runtime.android)
         }
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)
-            implementation(libs.maplibre.compose)
         }
         jvmMain.dependencies {
             implementation(libs.ktor.client.okhttp)
-            implementation(libs.maplibre.compose)
-        }
-        webMain.dependencies {
-            implementation(libs.ktor.client.js)
         }
         jsMain.dependencies {
-            implementation(libs.wrappers.browser)
-            // MapLibre Compose has a JS build but no Wasm build.
-            implementation(libs.maplibre.compose)
+            implementation(libs.ktor.client.js)
         }
         commonMain.dependencies {
             implementation(libs.compose.runtime)
             implementation(libs.compose.foundation)
             implementation(libs.compose.material3)
+            implementation(libs.compose.materialIconsExtended)
             implementation(libs.compose.ui)
             implementation(libs.compose.components.resources)
             implementation(libs.compose.uiToolingPreview)
             implementation(libs.androidx.lifecycle.viewmodelCompose)
             implementation(libs.androidx.lifecycle.runtimeCompose)
-            implementation(libs.navigation.compose)
             implementation(libs.kotlinx.datetime)
             implementation(libs.kotlinx.serialization.json)
             implementation(libs.ktor.client.core)
-            implementation(libs.ktor.client.contentNegotiation)
-            implementation(libs.ktor.serialization.kotlinxJson)
             implementation(libs.koin.core)
             implementation(libs.koin.composeViewmodel)
             implementation(libs.multiplatform.settings)
+            implementation(libs.maplibre.compose)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
             implementation(libs.kotlinx.coroutinesTest)
             implementation(libs.ktor.client.mock)
+            implementation(libs.multiplatform.settings.test)
+        }
+        // The tests of the UI layer draw it on the desktop, so they run on the JVM.
+        jvmTest.dependencies {
+            implementation(compose.desktop.currentOs)
+            implementation(libs.compose.uiTest)
         }
         getByName("androidDeviceTest").dependencies {
             implementation(libs.androidx.testRunner)
