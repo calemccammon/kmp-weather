@@ -3,16 +3,14 @@
 
 naming:
   MatchingDeclarationName:
-    # Platform.android.kt, Platform.ios.kt and so on hold the actuals of Platform.kt.
-    multiplatformTargets: ['android', 'ios', 'jvm', 'js', 'wasmJs', 'web']
-    # The wizard's sample names its actual classes AndroidPlatform, IOSPlatform...
-    # Drop this line when the sample is gone.
-    excludes: ['**/Platform.*.kt']
+    # Dependencies.android.kt, Dependencies.ios.kt and so on hold the actuals of Dependencies.kt.
+    multiplatformTargets: ['android', 'ios', 'jvm', 'js']
   FunctionNaming:
     # Composable functions are named like classes.
     ignoreAnnotated: ['Composable']
     # The iOS entry point is a function named like the UIKit class it returns.
-    excludes: ['**/MainViewController.kt']
+    # Tests are named as sentences, in backticks.
+    excludes: ['**/MainViewController.kt', '**/*Test/**']
   TopLevelPropertyNaming:
     constantPattern: '[A-Z][A-Za-z0-9_]*'
 

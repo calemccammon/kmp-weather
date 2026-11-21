@@ -33,4 +33,10 @@ subprojects {
         // detekt does not look in by default.
         source.setFrom(fileTree("src") { include("**/*.kt") })
     }
+
+    // The desktop app is built for Java 25, which this detekt cannot name.
+    // It reads source, not bytecode, so the version it is told changes nothing.
+    tasks.withType<io.gitlab.arturbosch.detekt.Detekt>().configureEach {
+        jvmTarget = "21"
+    }
 }

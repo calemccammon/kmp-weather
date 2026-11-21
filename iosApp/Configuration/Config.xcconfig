@@ -5,3 +5,7 @@ PRODUCT_BUNDLE_IDENTIFIER=com.calemccammon.weather.kmp.kmp-weather$(TEAM_ID)
 
 CURRENT_PROJECT_VERSION=1
 MARKETING_VERSION=1.0
+
+// MapLibre Native is linked statically into the shared framework and needs
+// these: https://maplibre.org/maplibre-compose/getting-started/
+OTHER_LDFLAGS=$(inherited) -lc++ -lz -framework CoreFoundation -framework CoreGraphics -framework CoreText -framework Foundation -framework ImageIO -framework Metal -framework QuartzCore

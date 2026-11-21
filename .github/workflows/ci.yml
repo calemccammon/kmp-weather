@@ -48,8 +48,13 @@ jobs:
           distribution: zulu
           java-version: 21
       - uses: gradle/actions/setup-gradle@v6
-      # iOS tests need a macOS runner and are left out.
-      - run: ./gradlew :shared:jvmTest :shared:testAndroidHostTest :shared:jsTest :shared:wasmJsTest
+      # The domain and data tests run on every platform that can run here:
+      # the JVM (with the UI's tests, which draw it on the desktop), Android
+      # and the browser. iOS tests need a macOS runner, so the iOS code is
+      # only compiled.
+      - run: >
+          ./gradlew :shared:jvmTest :shared:testAndroidHostTest :shared:jsTest
+          :shared:compileKotlinIosSimulatorArm64
 
   build:
     name: Build Android APK, desktop and web apps
@@ -63,7 +68,8 @@ jobs:
           distribution: zulu
           java-version: 21
       - uses: gradle/actions/setup-gradle@v6
-      - run: ./gradlew :androidApp:assembleDebug :desktopApp:assemble :webApp:wasmJsBrowserDistribution
+      # The desktop app needs Java 25, which Gradle fetches for itself.
+      - run: ./gradlew :androidApp:assembleDebug :desktopApp:assemble :webApp:jsBrowserDistribution
       - uses: actions/upload-artifact@v7
         with:
           name: kmp-weather-debug-apk
@@ -72,5 +78,5 @@ jobs:
       - uses: actions/upload-artifact@v7
         with:
           name: kmp-weather-web
-          path: webApp/build/dist/wasmJs/productionExecutable
+          path: webApp/build/dist/js/productionExecutable
           retention-days: 14
