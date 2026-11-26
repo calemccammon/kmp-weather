@@ -2,7 +2,6 @@ package com.calemccammon.weather.kmp.domain.repositories
 
 import com.calemccammon.weather.kmp.domain.models.Forecast
 import com.calemccammon.weather.kmp.domain.models.Place
-import com.calemccammon.weather.kmp.domain.models.Units
 
 /**
  * Where the app gets places and forecasts from.
@@ -16,11 +15,10 @@ interface WeatherRepository {
     /** Places whose name matches [query], best match first. */
     suspend fun searchPlaces(query: String): List<Place>
 
-    /** Current conditions and the days ahead at a point. */
+    /** Current conditions and the days ahead at a point, in metric units. */
     suspend fun forecast(
         latitude: Double,
         longitude: Double,
-        units: Units,
     ): Forecast
 }
 

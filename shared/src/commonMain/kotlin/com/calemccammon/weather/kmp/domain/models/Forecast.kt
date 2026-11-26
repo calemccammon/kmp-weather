@@ -28,11 +28,44 @@ data class DailyForecast(
     val precipitationChance: Int? = null,
 )
 
-/** Current conditions and the days ahead for one place. */
+/**
+ * Current conditions and the days ahead for one place.
+ *
+ * A forecast from the repository is metric: degrees Celsius and kilometres an
+ * hour. [inUnits] gives the same forecast in another system, so changing units
+ * never needs the network.
+ */
 data class Forecast(
     val current: CurrentConditions,
     val days: List<DailyForecast>,
 ) {
     /** Whether [day] is the day the current conditions were measured on. */
     fun isToday(day: DailyForecast): Boolean = day.date == current.observedAt.date
+
+    /**
+     * This metric forecast with its temperatures and wind speed in [units].
+     * The chance of precipitation is a percentage in any units.
+     */
+    fun inUnits(units: Units): Forecast =
+        when (units) {
+            Units.Metric -> this
+            Units.Imperial ->
+                Forecast(
+                    current =
+                        current.copy(
+                            temperature = fahrenheit(current.temperature),
+                            feelsLike = fahrenheit(current.feelsLike),
+                            windSpeed = current.windSpeed * MILES_PER_KILOMETRE,
+                        ),
+                    days = days.map { it.copy(low = fahrenheit(it.low), high = fahrenheit(it.high)) },
+                )
+        }
+
+    private companion object {
+        const val MILES_PER_KILOMETRE = 0.621371
+        const val FAHRENHEIT_PER_CELSIUS = 1.8
+        const val FREEZING_FAHRENHEIT = 32
+
+        fun fahrenheit(celsius: Double): Double = celsius * FAHRENHEIT_PER_CELSIUS + FREEZING_FAHRENHEIT
+    }
 }

@@ -3,7 +3,6 @@ package com.calemccammon.weather.kmp.data.repositories
 import com.calemccammon.weather.kmp.domain.models.CurrentConditions
 import com.calemccammon.weather.kmp.domain.models.DailyForecast
 import com.calemccammon.weather.kmp.domain.models.Place
-import com.calemccammon.weather.kmp.domain.models.Units
 import com.calemccammon.weather.kmp.domain.models.WeatherCondition
 import com.calemccammon.weather.kmp.domain.repositories.WeatherException
 import com.calemccammon.weather.kmp.domain.repositories.WeatherFailure
@@ -37,8 +36,7 @@ class OpenMeteoWeatherRepositoryTest {
         ),
     )
 
-    private suspend fun OpenMeteoWeatherRepository.forecastSomewhere(units: Units = Units.Imperial) =
-        forecast(latitude = 35.6, longitude = -82.55, units = units)
+    private suspend fun OpenMeteoWeatherRepository.forecastSomewhere() = forecast(latitude = 35.6, longitude = -82.55)
 
     private suspend fun failureOf(request: suspend () -> Unit): WeatherException =
         assertFailsWith<WeatherException> {
@@ -136,21 +134,18 @@ class OpenMeteoWeatherRepositoryTest {
         }
 
     @Test
-    fun `a forecast is asked for in the units wanted on the place's own clock`() =
+    fun `a forecast is asked for in metric units on the place's own clock`() =
         runTest {
-            answering(FORECAST_BODY).forecastSomewhere(Units.Imperial)
-            answering(FORECAST_BODY).forecastSomewhere(Units.Metric)
+            answering(FORECAST_BODY).forecastSomewhere()
 
-            val (imperial, metric) = urls
-            assertEquals("api.open-meteo.com", imperial.host)
-            assertEquals("/v1/forecast", imperial.encodedPath)
-            assertEquals("35.6", imperial.parameters["latitude"])
-            assertEquals("-82.55", imperial.parameters["longitude"])
-            assertEquals("auto", imperial.parameters["timezone"])
-            assertEquals("fahrenheit", imperial.parameters["temperature_unit"])
-            assertEquals("mph", imperial.parameters["wind_speed_unit"])
-            assertEquals("celsius", metric.parameters["temperature_unit"])
-            assertEquals("kmh", metric.parameters["wind_speed_unit"])
+            val url = urls.single()
+            assertEquals("api.open-meteo.com", url.host)
+            assertEquals("/v1/forecast", url.encodedPath)
+            assertEquals("35.6", url.parameters["latitude"])
+            assertEquals("-82.55", url.parameters["longitude"])
+            assertEquals("auto", url.parameters["timezone"])
+            assertEquals("celsius", url.parameters["temperature_unit"])
+            assertEquals("kmh", url.parameters["wind_speed_unit"])
         }
 
     @Test

@@ -25,23 +25,28 @@ val asheville =
 
 val sydney = Place(name = "Sydney", latitude = -33.87, longitude = 151.21, country = "Australia")
 
-/** A Wednesday morning, then a week whose first day is that Wednesday. */
+/**
+ * A Wednesday morning, then a week whose first day is that Wednesday. In
+ * metric units, as the repository gives every forecast; in Fahrenheit and mph
+ * it shows as 36°F, feels like 31°, wind 4 mph, and days of 30° to 64°,
+ * 42° to 58° and 29° to 64°.
+ */
 fun sampleForecast(
-    temperature: Double = 35.8,
+    temperature: Double = 2.1,
     days: List<DailyForecast> =
         listOf(
-            DailyForecast(LocalDate(2026, 11, 18), low = 30.2, high = 64.3, condition = WeatherCondition.Clear),
+            DailyForecast(LocalDate(2026, 11, 18), low = -1.0, high = 17.9, condition = WeatherCondition.Clear),
             DailyForecast(
                 LocalDate(2026, 11, 19),
-                low = 41.9,
-                high = 58.1,
+                low = 5.5,
+                high = 14.5,
                 condition = WeatherCondition.Rain,
                 precipitationChance = 47,
             ),
             DailyForecast(
                 LocalDate(2026, 11, 22),
-                low = 28.6,
-                high = 64.3,
+                low = -1.9,
+                high = 17.9,
                 condition = WeatherCondition.Rain,
                 precipitationChance = 80,
             ),
@@ -51,8 +56,8 @@ fun sampleForecast(
         CurrentConditions(
             observedAt = LocalDateTime(2026, 11, 18, 9, 0),
             temperature = temperature,
-            feelsLike = 31.3,
-            windSpeed = 4.4,
+            feelsLike = -0.4,
+            windSpeed = 6.4,
             condition = WeatherCondition.Clear,
             isDay = true,
         ),
@@ -87,9 +92,8 @@ class FakeWeatherRepository : WeatherRepository {
     override suspend fun forecast(
         latitude: Double,
         longitude: Double,
-        units: Units,
     ): Forecast {
-        forecastRequests += ForecastRequest(latitude, longitude, units)
+        forecastRequests += ForecastRequest(latitude, longitude)
         failure?.let { throw it }
         return forecastToReturn ?: CompletableDeferred<Forecast>().also { forecasts += it }.await()
     }
@@ -98,7 +102,6 @@ class FakeWeatherRepository : WeatherRepository {
 data class ForecastRequest(
     val latitude: Double,
     val longitude: Double,
-    val units: Units,
 )
 
 class FakeSettingsRepository(
