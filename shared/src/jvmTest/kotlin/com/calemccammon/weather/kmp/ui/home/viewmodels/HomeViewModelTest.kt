@@ -74,7 +74,7 @@ class HomeViewModelTest : MainDispatcherTest() {
             advanceUntilIdle()
 
             assertEquals("36°F", viewModel.temperature)
-            assertEquals(listOf(ForecastRequest(35.6, -82.55, Units.Imperial)), weather.forecastRequests)
+            assertEquals(listOf(ForecastRequest(35.6, -82.55)), weather.forecastRequests)
         }
 
     @Test
@@ -142,7 +142,7 @@ class HomeViewModelTest : MainDispatcherTest() {
             )
             assertEquals(ForecastState.Loading, viewModel.shown.forecast)
 
-            weather.forecasts[1].complete(sampleForecast(temperature = 70.0))
+            weather.forecasts[1].complete(sampleForecast(temperature = 21.0))
             advanceUntilIdle()
 
             assertEquals("70°F", viewModel.temperature)
@@ -164,25 +164,48 @@ class HomeViewModelTest : MainDispatcherTest() {
         }
 
     @Test
-    fun `choosing other units asks for the forecast again in them and remembers the choice`() =
+    fun `choosing other units converts the forecast on screen without asking again and remembers the choice`() =
         runTest {
             val viewModel = viewModel()
             viewModel.select(asheville)
             advanceUntilIdle()
             val place = viewModel.shown.place
+            assertEquals("36°F", viewModel.temperature)
+
+            viewModel.setUnits(UnitsUiModel.Celsius)
+
+            // At once, with no loading in between.
+            assertEquals(UnitsUiModel.Celsius, viewModel.shown.units)
+            assertEquals("2°C", viewModel.temperature)
+            // The place is the same one, so the map has no reason to move.
+            assertEquals(place, viewModel.shown.place)
+
+            viewModel.setUnits(UnitsUiModel.Fahrenheit)
+            advanceUntilIdle()
+
+            assertEquals("36°F", viewModel.temperature)
+            assertEquals(1, weather.forecastRequests.size)
+            assertEquals(Units.Imperial, settings.units)
+        }
+
+    @Test
+    fun `units chosen while the forecast is on its way are the ones it arrives in`() =
+        runTest {
+            val viewModel = viewModel()
+            weather.forecastToReturn = null
+            viewModel.select(asheville)
+            advanceUntilIdle()
 
             viewModel.setUnits(UnitsUiModel.Celsius)
 
             assertEquals(UnitsUiModel.Celsius, viewModel.shown.units)
             assertEquals(ForecastState.Loading, viewModel.shown.forecast)
-            // The place is the same one, so the map has no reason to move.
-            assertEquals(place, viewModel.shown.place)
 
+            weather.forecasts.single().complete(sampleForecast())
             advanceUntilIdle()
 
-            assertEquals("36°C", viewModel.temperature)
-            assertEquals(listOf(Units.Imperial, Units.Metric), weather.forecastRequests.map { it.units })
-            assertEquals(Units.Metric, settings.units)
+            assertEquals("2°C", viewModel.temperature)
+            assertEquals(1, weather.forecastRequests.size)
         }
 
     @Test
@@ -222,7 +245,7 @@ class HomeViewModelTest : MainDispatcherTest() {
             viewModel.setUnits(UnitsUiModel.Celsius)
             advanceUntilIdle()
 
-            assertEquals("36°C", viewModel.temperature)
+            assertEquals("2°C", viewModel.temperature)
             assertNull(settings.units)
         }
 

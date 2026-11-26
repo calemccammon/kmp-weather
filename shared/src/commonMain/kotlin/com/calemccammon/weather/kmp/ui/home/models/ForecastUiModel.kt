@@ -52,11 +52,15 @@ data class ForecastUiModel(
     val days: List<DayUiModel>,
 ) {
     companion object {
-        /** Translates a domain [Forecast] for display in [units]. */
+        /**
+         * Translates a metric domain [Forecast] for display in [units]. The
+         * values are converted before they are rounded.
+         */
         fun from(
-            forecast: Forecast,
+            metric: Forecast,
             units: Units,
         ): ForecastUiModel {
+            val forecast = metric.inUnits(units)
             // The whole week's range, so each day's bar shows where it sits in it.
             val weekLow = forecast.days.minOfOrNull { it.low } ?: 0.0
             val weekHigh = forecast.days.maxOfOrNull { it.high } ?: 0.0

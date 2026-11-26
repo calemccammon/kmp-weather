@@ -38,17 +38,17 @@ class UseCasesTest {
         }
 
     @Test
-    fun `a forecast is asked for at the place in the units given`() =
+    fun `a forecast is asked for at the place`() =
         runTest {
-            GetForecast(weather)(asheville, Units.Imperial)
+            GetForecast(weather)(asheville)
 
-            assertEquals(listOf(ForecastRequest(35.6, -82.55, Units.Imperial)), weather.forecastRequests)
+            assertEquals(listOf(ForecastRequest(35.6, -82.55)), weather.forecastRequests)
         }
 
     @Test
     fun `a forecast is asked for with the longitude in range`() =
         runTest {
-            GetForecast(weather)(Place(latitude = 10.0, longitude = 190.0), Units.Metric)
+            GetForecast(weather)(Place(latitude = 10.0, longitude = 190.0))
 
             assertEquals(-170.0, weather.forecastRequests.single().longitude)
         }
@@ -62,7 +62,7 @@ class UseCasesTest {
                 Place(latitude = 0.0, longitude = Double.POSITIVE_INFINITY),
                 Place(latitude = 0.0, longitude = Double.NaN),
             )) {
-                val error = assertFailsWith<WeatherException> { GetForecast(weather)(place, Units.Metric) }
+                val error = assertFailsWith<WeatherException> { GetForecast(weather)(place) }
                 assertEquals(WeatherFailure.InvalidPlace, error.failure)
             }
             assertEquals(emptyList(), weather.forecastRequests)

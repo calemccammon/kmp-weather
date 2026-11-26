@@ -2,6 +2,7 @@ package com.calemccammon.weather.kmp.ui.home.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.calemccammon.weather.kmp.domain.models.Forecast
 import com.calemccammon.weather.kmp.domain.models.Place
 import com.calemccammon.weather.kmp.domain.models.Units
 import com.calemccammon.weather.kmp.domain.repositories.SettingsException
@@ -25,6 +26,9 @@ import kotlinx.coroutines.launch
 /**
  * Holds the selected place and the chosen units, and loads the forecast.
  *
+ * The forecast is held as it came, in metric units, and converted for the
+ * screen, so choosing other units never asks for it again.
+ *
  * Selecting a place while an earlier forecast is still on its way gives the
  * earlier request up, so its answer never replaces the newer one.
  */
@@ -37,6 +41,9 @@ class HomeViewModel(
 ) : ViewModel() {
     private var place: Place? = null
     private var units: Units = getUnits(deviceCountry)
+
+    /** The selected place's forecast in metric units, once it has arrived. */
+    private var forecast: Forecast? = null
 
     /** The forecast request under way, if any. */
     private var loading: Job? = null
@@ -59,12 +66,14 @@ class HomeViewModel(
     fun clear() {
         loading?.cancel()
         place = null
+        forecast = null
         mutableState.value = HomeState(units = UnitsUiModel.from(units))
     }
 
     /**
      * Shows forecasts in [chosen] from now on, and remembers the choice. The
-     * forecast on screen is asked for again in them.
+     * forecast on screen is converted at once, without asking for it again; one
+     * still on its way arrives in them.
      */
     fun setUnits(chosen: UnitsUiModel) {
         val units = chosen.toDomain()
@@ -76,7 +85,9 @@ class HomeViewModel(
             // Not saved, so the next launch starts from the old choice; this
             // one carries on with the new.
         }
-        if (place == null) mutableState.update { it.copy(units = chosen) } else load()
+        // Loading or failed, there is nothing to convert yet.
+        val converted = forecast?.let { ForecastState.Loaded(ForecastUiModel.from(it, units)) }
+        mutableState.update { it.copy(units = chosen, forecast = converted ?: it.forecast) }
     }
 
     /** Asks for the selected place's forecast again, after a failure. */
@@ -84,8 +95,8 @@ class HomeViewModel(
 
     private fun load() {
         val place = place ?: return
-        val units = units
         loading?.cancel()
+        forecast = null
         mutableState.value =
             HomeState(
                 units = UnitsUiModel.from(units),
@@ -96,7 +107,10 @@ class HomeViewModel(
             viewModelScope.launch {
                 val outcome =
                     try {
-                        ForecastState.Loaded(ForecastUiModel.from(getForecast(place, units), units))
+                        val forecast = getForecast(place)
+                        this@HomeViewModel.forecast = forecast
+                        // In the units chosen by the time it arrives.
+                        ForecastState.Loaded(ForecastUiModel.from(forecast, units))
                     } catch (e: WeatherException) {
                         ForecastState.Failed(e.failure.message)
                     }

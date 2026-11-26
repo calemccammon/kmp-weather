@@ -31,8 +31,9 @@ class ForecastUiModelTest {
         val current = ForecastUiModel.from(sampleForecast(temperature = 2.4), Units.Metric).current
 
         assertEquals("2°C", current.temperature.words)
-        assertEquals("Wind 4 km/h", current.wind.words)
-        assertEquals("Now: Clear, 2 degrees Celsius, feels like 31, wind 4 km/h", current.description.words)
+        assertEquals("Feels like 0°", current.feelsLike.words)
+        assertEquals("Wind 6 km/h", current.wind.words)
+        assertEquals("Now: Clear, 2 degrees Celsius, feels like 0, wind 6 km/h", current.description.words)
     }
 
     @Test
@@ -63,12 +64,12 @@ class ForecastUiModelTest {
 
     @Test
     fun `a day's bar shows where its range sits in the week's`() {
-        // The week runs from 28.6 to 64.3.
+        // The week runs from -1.9 °C to 17.9 °C; converting it to Fahrenheit moves no bar.
         val (today, thursday, sunday) = imperial.days
 
         assertEquals(1f, today.barEnd)
-        assertEquals((30.2f - 28.6f) / (64.3f - 28.6f), today.barStart, absoluteTolerance = 0.0001f)
-        assertEquals((58.1f - 28.6f) / (64.3f - 28.6f), thursday.barEnd, absoluteTolerance = 0.0001f)
+        assertEquals((-1.0f + 1.9f) / (17.9f + 1.9f), today.barStart, absoluteTolerance = 0.0001f)
+        assertEquals((14.5f + 1.9f) / (17.9f + 1.9f), thursday.barEnd, absoluteTolerance = 0.0001f)
         assertEquals(0f to 1f, sunday.barStart to sunday.barEnd)
     }
 

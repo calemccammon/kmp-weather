@@ -5,7 +5,6 @@ import com.calemccammon.weather.kmp.data.models.PlaceDto
 import com.calemccammon.weather.kmp.data.models.PlaceSearchDto
 import com.calemccammon.weather.kmp.domain.models.Forecast
 import com.calemccammon.weather.kmp.domain.models.Place
-import com.calemccammon.weather.kmp.domain.models.Units
 import com.calemccammon.weather.kmp.domain.repositories.WeatherException
 import com.calemccammon.weather.kmp.domain.repositories.WeatherFailure
 import com.calemccammon.weather.kmp.domain.repositories.WeatherRepository
@@ -54,7 +53,6 @@ class OpenMeteoWeatherRepository(
     override suspend fun forecast(
         latitude: Double,
         longitude: Double,
-        units: Units,
     ): Forecast {
         val body =
             get(FORECAST_URL) {
@@ -67,20 +65,9 @@ class OpenMeteoWeatherRepository(
                 )
                 parameter("forecast_days", FORECAST_DAYS)
                 parameter("timezone", "auto")
-                parameter(
-                    "temperature_unit",
-                    when (units) {
-                        Units.Metric -> "celsius"
-                        Units.Imperial -> "fahrenheit"
-                    },
-                )
-                parameter(
-                    "wind_speed_unit",
-                    when (units) {
-                        Units.Metric -> "kmh"
-                        Units.Imperial -> "mph"
-                    },
-                )
+                // Always metric; the app converts on the device (see Forecast.inUnits).
+                parameter("temperature_unit", "celsius")
+                parameter("wind_speed_unit", "kmh")
             }
         return read { json.decodeFromString<ForecastDto>(body).toDomain() }
     }

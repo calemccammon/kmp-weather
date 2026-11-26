@@ -265,10 +265,11 @@ class HomeScreenTest : MainDispatcherTest() {
             onNodeWithContentDescription("Celsius and km/h").performClick()
             settle()
 
-            onDrawnText("36°C").assertExists()
-            onDrawnText("Wind 4 km/h").assertExists()
+            onDrawnText("2°C").assertExists()
+            onDrawnText("Wind 6 km/h").assertExists()
             onNodeWithContentDescription("Celsius and km/h").assertIsSelected()
-            assertEquals(Units.Metric, weather.forecastRequests.last().units)
+            // Converted on the device, not asked for again.
+            assertEquals(1, weather.forecastRequests.size)
             assertEquals(Units.Metric, settings.units)
         }
 
@@ -290,7 +291,7 @@ class HomeScreenTest : MainDispatcherTest() {
             settle()
 
             onNodeWithText("This week").assertExists()
-            assertEquals(listOf(ForecastRequest(35.6, -82.55, Units.Imperial)), weather.forecastRequests)
+            assertEquals(listOf(ForecastRequest(35.6, -82.55)), weather.forecastRequests)
             assertEquals(MapPin(35.6, -82.55), pin)
         }
 
